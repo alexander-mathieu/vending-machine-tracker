@@ -34,25 +34,14 @@ RSpec.describe "when I visit a snack show page" do
       expect(page).to have_content(@snack_1.price)
     end
 
-    it "I see a list of locations with vending machines that carry that snack with the average price" do
+    it "I see vending machine locations with their total snack count and average price that carry that snack" do
       visit snack_path(@snack_1)
 
-      within(".locations") do
-        expect(page).to have_content(@machine_1.location)
-        expect(page).to have_content(@machine_2.location)
+      within(".location-info") do
+        expect(page).to have_content("#{@machine_1.location}, #{@machine_1.total_snacks} total snacks (average price: $#{'%.2f' % @machine_1.average_snack_price})")
 
-        expect(page).to have_content(@snack.average_price)
+        expect(page).to have_content("#{@machine_2.location}, #{@machine_2.total_snacks} total snacks (average price: $#{'%.2f' % @machine_2.average_snack_price})")
       end
-    end
-
-    it "I see a count of different items in that vending machine" do
-      visit snack_path(@snack_1)
     end
   end
 end
-
-# Flaming Hot Cheetos
-# Price: $2.50
-# Locations
-# * Don's Mixed Drinks (3 kinds of snacks, average price of $2.50)
-# * Turing Basement (2 kinds of snacks, average price of $3.00
