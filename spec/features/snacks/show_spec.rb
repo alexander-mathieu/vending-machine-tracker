@@ -1,32 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Machine, type: :model do
-  describe 'validations' do
-    it {should validate_presence_of :location}
-  end
-
-  describe "relationships" do
-    it {should belong_to :owner}
-    it {should have_many :snacks}
-  end
-
-  describe "instance methods" do
-    before :each do
-      @owner = Owner.create!(name: "Owner's Snacks")
-
-      @machine = @owner.machines.create(location: "Machine Location")
-
-      @snack_1 = @machine.snacks.create!(name: "Snack 1", price: 1.00)
-      @snack_2 = @machine.snacks.create!(name: "Snack 2", price: 2.00)
-      @snack_3 = @machine.snacks.create!(name: "Snack 3", price: 3.00)
-    end
-
-    it "#average_price" do
-      expect(@machine.average_snack_price).to eq(2.00)
-    end
-  end
-
-  describe "class methods" do
+RSpec.describe "when I visit a snack show page" do
+  context "as a user" do
     before :each do
       @owner = Owner.create!(name: "Owner's Snacks")
 
@@ -52,8 +27,32 @@ RSpec.describe Machine, type: :model do
       @machine_2.snacks << @snack_8
     end
 
-    it "average_snack_price_for_all_machines" do
-      expect(Machine.average_snack_price_for_all_machines(@snack_1)).to eq(1.00)
+    it "I see the name and price of that snack" do
+      visit snack_path(@snack_1)
+
+      expect(page).to have_content(@snack_1.name)
+      expect(page).to have_content(@snack_1.price)
+    end
+
+    it "I see a list of locations with vending machines that carry that snack with the average price" do
+      visit snack_path(@snack_1)
+
+      within(".locations") do
+        expect(page).to have_content(@machine_1.location)
+        expect(page).to have_content(@machine_2.location)
+
+        expect(page).to have_content(@snack.average_price)
+      end
+    end
+
+    it "I see a count of different items in that vending machine" do
+      visit snack_path(@snack_1)
     end
   end
 end
+
+# Flaming Hot Cheetos
+# Price: $2.50
+# Locations
+# * Don's Mixed Drinks (3 kinds of snacks, average price of $2.50)
+# * Turing Basement (2 kinds of snacks, average price of $3.00
